@@ -3,25 +3,107 @@ import './App.scss';
 import ChartForm from './components/ChartForm.component';
 import Graphs from './components/Graphs.component';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { getAllStocks } from './http/api';
-import { StockModel } from './models/stock.model';
-import {prices as Prices} from './common/constants';
+import { getCandleChart, searchSymbol } from './http/api';
+import { FormModel } from './models/stock.model';
+import { prices as Prices } from './common/constants';
+import {
+  convertDateToUnixTimestamp,
+  convertUnixTimestampToDate,
+} from './helpers/date-helper';
 
+const initialState = {
+  prices: Prices.OPEN,
+  startDate: new Date(
+    new Date().setFullYear(new Date().getFullYear() - 1)
+  ).toDateString(),
+  endDate: new Date().toDateString(),
+  search: '',
+};
 const App: React.FC = () => {
-  const [stocks, setStocks] = useState<StockModel[]>([]);
-  const [prices, setPrices] = useState<string>(Prices.OPEN);
+  const [formData, setFormData] = useState<FormModel>(initialState);
+  const { prices, startDate, endDate, search } = formData;
+  const [candleData, setCandleData] = useState([]);
+  const [bestMatches, setBestMatches] = useState([]);
+
+  const changeFormData: React.ChangeEventHandler<HTMLInputElement> = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const updateBestMatches = async () => {
+    try {
+      if (search) {
+        const searchResults = await searchSymbol(search);
+        
+        const result = searchResults.data.result;
+        setBestMatches(result);
+      }
+    } catch (error) {
+      setBestMatches([]);
+      console.log(error);
+    }
+  };
+
+  const clear = ():void => {
+    setFormData({ ...formData, search: '' });
+    setBestMatches([]);
+  };
+
+  const formatData = (data: any) => {
+    return data[prices[0].toLocaleLowerCase()]?.map(
+      (item: any, index: number) => {
+        return {
+          value: item.toFixed(2),
+          date: convertUnixTimestampToDate(data.t[index]),
+        };
+      }
+    );
+  };
+
+  const getDateRange = () => {
+    const startTimestampUnix = convertDateToUnixTimestamp(startDate);
+    const endTimestampUnix = convertDateToUnixTimestamp(endDate);
+    return { startTimestampUnix, endTimestampUnix };
+  };
+
+  const updateChartData = async () => {
+    try {
+      const { startTimestampUnix, endTimestampUnix } = getDateRange();
+      const result = await getCandleChart(
+        'MSFT',
+        'D',
+        startTimestampUnix,
+        endTimestampUnix
+      );
+      result && result.data && setCandleData(formatData(result.data));
+    } catch (error) {
+      setCandleData([]);
+      console.log(error);
+    }
+  };
+
+  const handleDateChange: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    updateChartData();
+  };
+
   useEffect(() => {
-    getAllStocks().then((data) => {
-      setStocks(data?.data?.slice(0, 50));
-    });
-  }, []);
+    updateChartData();
+  }, [prices]);
+
   return (
-    <div className="container mt-5 row">
+    <div className="container-fluid mt-5 row">
       <div className="col-lg-9">
-        <Graphs prices={prices}/>
+        <Graphs candleData={candleData} />
       </div>
       <div className="col-lg-3">
-        <ChartForm stocks={stocks} prices={prices} setPrices={setPrices}/>
+        <ChartForm
+          prices={prices}
+          changeFormData={changeFormData}
+          handleDateChange={handleDateChange}
+          search={search}
+          bestMatches={bestMatches}
+          updateBestMatches={updateBestMatches}
+          clear={clear}
+        />
       </div>
     </div>
   );

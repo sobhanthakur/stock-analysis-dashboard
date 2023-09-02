@@ -19,3 +19,24 @@
     background: rgb(104, 131, 215) !important;
     width: 100%;
 }
+
+.dropdown-container {
+    height: 100px;
+    width: 100%;
+    overflow: auto;
+}
+
+.dropdown-list:hover {
+    cursor: pointer;
+    background: rgb(104, 131, 215) !important;
+    color: white;
+}
+
+.cross-icon {
+    color: darkgrey;
+    position: relative;
+    left: -10px;
+    cursor: pointer;
+    top: 4px;
+    font-weight: 600;
+}

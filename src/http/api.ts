@@ -1,11 +1,17 @@
 import axios, { AxiosResponse } from 'axios';
 type AxiosGetFunction<T = any> = () => Promise<AxiosResponse<T>>;
 
+const basePath = 'https://finnhub.io/api/v1';
 export const getAllStocks: AxiosGetFunction = async () => {
-  const res = await axios.get(
-    `https://finnhub.io/api/v1/stock/symbol?exchange=US&token=cjocu31r01qlfp4fh56gcjocu31r01qlfp4fh570`
-  );
-  return res;
+  try {
+    const res = await axios.get(
+      `${basePath}/stock/symbol?exchange=US&token=${process.env.REACT_APP_API_KEY}`
+    );
+    return res;
+  } catch (err) {
+    const message = `An error has occured`;
+    throw new Error(message);
+  }
 };
 
 export const getCandleChart = async (
@@ -14,8 +20,25 @@ export const getCandleChart = async (
   from: number,
   to: number
 ) => {
-  const res = await axios.get(
-    `https://finnhub.io/api/v1/stock/candle?symbol=${symbol}&resolution=${resolution}&from=${from}&to=${to}&token=cjocu31r01qlfp4fh56gcjocu31r01qlfp4fh570`
-  );
-  return res;
+  try {
+    const res = await axios.get(
+      `${basePath}/stock/candle?symbol=${symbol}&resolution=${resolution}&from=${from}&to=${to}&token=${process.env.REACT_APP_API_KEY}`
+    );
+    return res;
+  } catch (err) {
+    const message = `An error has occured`;
+    throw new Error(message);
+  }
+};
+
+export const searchSymbol = async (query: string) => {
+  try {
+    const res = await axios.get(
+      `${basePath}/search?q=${query}&token=${process.env.REACT_APP_API_KEY}`
+    );
+    return res;
+  } catch (err) {
+    const message = `An error has occured`;
+    throw new Error(message);
+  }
 };

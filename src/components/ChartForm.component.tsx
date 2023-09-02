@@ -1,26 +1,60 @@
-import { useState } from 'react';
 import { prices as Prices } from '../common/constants';
-import { StockModel } from '../models/stock.model';
+import SearchResults from './SearchResults';
 const ChartForm: React.FC<{
-  stocks: StockModel[];
-  setPrices: React.Dispatch<React.SetStateAction<string>>;
-  prices: string
-}> = ({ stocks, setPrices, prices }) => {
-  const [startDate, setStartDate] = useState<string | undefined>(undefined);
-  const [endDate, setEndDate] = useState<string | undefined>(undefined);
-
-  const handleStartDateChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setStartDate(event.target.value);
-  };
-
-  const handleEndDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEndDate(event.target.value);
-  };
-
+  changeFormData: React.ChangeEventHandler<HTMLInputElement>;
+  handleDateChange: React.MouseEventHandler<HTMLButtonElement>;
+  prices: string;
+  search: string;
+  bestMatches: any[];
+  updateBestMatches: any;
+  clear: any;
+}> = ({
+  changeFormData,
+  prices,
+  handleDateChange,
+  search,
+  bestMatches,
+  updateBestMatches,
+  clear,
+}) => {
   return (
     <>
+      <div className="input-group mb-3">
+        <input
+          type="text"
+          value={search}
+          name="search"
+          className="form-control"
+          placeholder="Search stock..."
+          onChange={(event) => {
+            changeFormData(event);
+            updateBestMatches();
+          }}
+        />
+        {search && (
+          <div className="input-group-append">
+            <button
+              className="btn btn-outline-secondary"
+              type="button"
+              onClick={clear}
+            >
+              <i className="fa fa-x"></i>
+            </button>
+          </div>
+        )}
+        {search && bestMatches.length > 0 && (
+          <div className="dropdown-container mt-1">
+            {bestMatches.map((item: any) => {
+              return (
+                <div key={item.symbol} className={`p-1 m-1 dropdown-list`}>
+                  <span>{item.symbol}</span> {' - '}
+                  <span>{item.description}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
       <div className="filter-container p-3">
         <div className="card-title text-center mb-2">Prices</div>
         <div className="row">
@@ -32,7 +66,7 @@ const ChartForm: React.FC<{
                 name="prices"
                 value={Prices.OPEN}
                 checked={prices === Prices.OPEN}
-                onChange={(event) => setPrices(event.target.value)}
+                onChange={(event) => changeFormData(event)}
               />
               <label className="form-check-label">
                 <span className="inner-text">{Prices.OPEN}</span>
@@ -45,7 +79,7 @@ const ChartForm: React.FC<{
                 name="prices"
                 value={Prices.CLOSE}
                 checked={prices === Prices.CLOSE}
-                onChange={(event) => setPrices(event.target.value)}
+                onChange={(event) => changeFormData(event)}
               />
               <label className="form-check-label">
                 <span className="inner-text">{Prices.CLOSE}</span>
@@ -60,7 +94,7 @@ const ChartForm: React.FC<{
                 name="prices"
                 value={Prices.LOW}
                 checked={prices === Prices.LOW}
-                onChange={(event) => setPrices(event.target.value)}
+                onChange={(event) => changeFormData(event)}
               />
               <label className="form-check-label">
                 <span className="inner-text">{Prices.LOW}</span>
@@ -73,7 +107,7 @@ const ChartForm: React.FC<{
                 name="prices"
                 value={Prices.HIGH}
                 checked={prices === Prices.HIGH}
-                onChange={(event) => setPrices(event.target.value)}
+                onChange={(event) => changeFormData(event)}
               />
               <label className="form-check-label">
                 <span className="inner-text">{Prices.HIGH}</span>
@@ -90,20 +124,24 @@ const ChartForm: React.FC<{
             <input
               type="date"
               className="form-control"
-              value={startDate || ''}
-              onChange={handleStartDateChange}
+              name="startDate"
+              onChange={(event) => changeFormData(event)}
             />
           </div>
           <div className="col-lg-6">
             <input
               type="date"
               className="form-control"
-              value={endDate || ''}
-              onChange={handleEndDateChange}
+              name="endDate"
+              onChange={(event) => changeFormData(event)}
             />
           </div>
           <div className="col-lg-12 mt-2">
-            <button type="button" className="btn btn-primary custom-button">
+            <button
+              type="button"
+              className="btn btn-primary custom-button"
+              onClick={(e) => handleDateChange(e)}
+            >
               Update Dates
             </button>
           </div>

@@ -10,3 +10,10 @@ export interface StockModel {
   symbol2: string;
   type: string;
 }
+
+export interface FormModel {
+  prices: string;
+  startDate: string;
+  endDate: string;
+  search: string
+}
