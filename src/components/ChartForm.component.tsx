@@ -1,5 +1,4 @@
 import { prices as Prices } from '../common/constants';
-import SearchResults from './SearchResults';
 const ChartForm: React.FC<{
   changeFormData: React.ChangeEventHandler<HTMLInputElement>;
   handleDateChange: React.MouseEventHandler<HTMLButtonElement>;
@@ -8,6 +7,7 @@ const ChartForm: React.FC<{
   bestMatches: any[];
   updateBestMatches: any;
   clear: any;
+  setSymbol: React.Dispatch<React.SetStateAction<string>>;
 }> = ({
   changeFormData,
   prices,
@@ -16,6 +16,7 @@ const ChartForm: React.FC<{
   bestMatches,
   updateBestMatches,
   clear,
+  setSymbol,
 }) => {
   return (
     <>
@@ -46,7 +47,11 @@ const ChartForm: React.FC<{
           <div className="dropdown-container mt-1">
             {bestMatches.map((item: any) => {
               return (
-                <div key={item.symbol} className={`p-1 m-1 dropdown-list`}>
+                <div
+                  key={item.symbol}
+                  className={`p-1 m-1 dropdown-list`}
+                  onClick={() => setSymbol(item.symbol)}
+                >
                   <span>{item.symbol}</span> {' - '}
                   <span>{item.description}</span>
                 </div>

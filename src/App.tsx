@@ -24,6 +24,7 @@ const App: React.FC = () => {
   const { prices, startDate, endDate, search } = formData;
   const [candleData, setCandleData] = useState([]);
   const [bestMatches, setBestMatches] = useState([]);
+  const [symbol, setSymbol] = useState('MSFT');
 
   const changeFormData: React.ChangeEventHandler<HTMLInputElement> = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -32,7 +33,7 @@ const App: React.FC = () => {
     try {
       if (search) {
         const searchResults = await searchSymbol(search);
-        
+
         const result = searchResults.data.result;
         setBestMatches(result);
       }
@@ -42,7 +43,7 @@ const App: React.FC = () => {
     }
   };
 
-  const clear = ():void => {
+  const clear = (): void => {
     setFormData({ ...formData, search: '' });
     setBestMatches([]);
   };
@@ -68,7 +69,7 @@ const App: React.FC = () => {
     try {
       const { startTimestampUnix, endTimestampUnix } = getDateRange();
       const result = await getCandleChart(
-        'MSFT',
+        symbol,
         'D',
         startTimestampUnix,
         endTimestampUnix
@@ -76,7 +77,8 @@ const App: React.FC = () => {
       result && result.data && setCandleData(formatData(result.data));
     } catch (error) {
       setCandleData([]);
-      console.log(error);
+      setSymbol('MSFT');
+      alert(error)
     }
   };
 
@@ -87,7 +89,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     updateChartData();
-  }, [prices]);
+  }, [prices, symbol]);
 
   return (
     <div className="container-fluid mt-5 row">
@@ -103,6 +105,7 @@ const App: React.FC = () => {
           bestMatches={bestMatches}
           updateBestMatches={updateBestMatches}
           clear={clear}
+          setSymbol={setSymbol}
         />
       </div>
     </div>
