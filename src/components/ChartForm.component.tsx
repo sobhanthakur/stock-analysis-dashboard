@@ -7,7 +7,9 @@ const ChartForm: React.FC<{
   bestMatches: any[];
   updateBestMatches: any;
   clear: any;
-  setSymbol: React.Dispatch<React.SetStateAction<string>>;
+  symbol: string[];
+  addSymbol: (e: string) => void;
+  removeSymbol: (e: string) => void;
 }> = ({
   changeFormData,
   prices,
@@ -16,8 +18,11 @@ const ChartForm: React.FC<{
   bestMatches,
   updateBestMatches,
   clear,
-  setSymbol,
+  symbol,
+  addSymbol,
+  removeSymbol,
 }) => {
+  const colors = ['#8884d8', '#82ca9d', '#ffc658'];
   return (
     <>
       <div className="input-group mb-3">
@@ -50,7 +55,7 @@ const ChartForm: React.FC<{
                 <div
                   key={item.symbol}
                   className={`p-1 m-1 dropdown-list`}
-                  onClick={() => setSymbol(item.symbol)}
+                  onClick={() => addSymbol(item.symbol)}
                 >
                   <span>{item.symbol}</span> {' - '}
                   <span>{item.description}</span>
@@ -122,7 +127,7 @@ const ChartForm: React.FC<{
         </div>
       </div>
 
-      <div className="mt-3 filter-container p-3">
+      <div className="mt-3 filter-container p-3 mb-1">
         <div className="card-title text-center mb-2">Time Range</div>
         <div className="row mt-1">
           <div className="col-lg-6">
@@ -151,6 +156,26 @@ const ChartForm: React.FC<{
             </button>
           </div>
         </div>
+      </div>
+
+      <div className="p-2">
+        {symbol.map((s, i) => (
+          <div
+            key={i}
+            style={{ background: colors[i] }}
+            className="row mb-2 symbol-styles"
+          >
+            <div className="col-lg-6">{s}</div>
+            <div className="col-lg-6">
+              <button
+                className="btn btn-info btn-sm remove-button"
+                onClick={() => removeSymbol(s)}
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
     </>
   );

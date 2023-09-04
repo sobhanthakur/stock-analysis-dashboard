@@ -22,12 +22,31 @@ const initialState = {
 const App: React.FC = () => {
   const [formData, setFormData] = useState<FormModel>(initialState);
   const { prices, startDate, endDate, search } = formData;
-  const [candleData, setCandleData] = useState([]);
+  const [candleData, setCandleData] = useState<any[]>([]);
   const [bestMatches, setBestMatches] = useState([]);
-  const [symbol, setSymbol] = useState('MSFT');
+  const [symbol, setSymbol] = useState(['MSFT']);
 
   const changeFormData: React.ChangeEventHandler<HTMLInputElement> = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const addSymbol = (s: string) => {
+    if (symbol.length === 3) {
+      alert('You can add upto 3 stocks');
+      return;
+    } else {
+      setSymbol([...symbol, s]);
+    }
+  };
+
+  const removeSymbol = (s: string) => {
+    if (symbol.length === 1) {
+      alert('Atleast one stock is needed');
+      return;
+    } else {
+      let updatedSymbol = symbol.filter((sym) => sym !== s);
+      setSymbol(updatedSymbol);
+    }
+  };
 
   const updateBestMatches = async () => {
     try {
@@ -68,17 +87,24 @@ const App: React.FC = () => {
   const updateChartData = async () => {
     try {
       const { startTimestampUnix, endTimestampUnix } = getDateRange();
-      const result = await getCandleChart(
-        symbol,
-        'D',
-        startTimestampUnix,
-        endTimestampUnix
-      );
-      result && result.data && setCandleData(formatData(result.data));
+
+      const stockPromises = symbol.map(async (s) => {
+        const response = await getCandleChart(
+          s,
+          'D',
+          startTimestampUnix,
+          endTimestampUnix
+        );
+        return formatData(response.data);
+      });
+
+      const stockData = await Promise.all(stockPromises);
+      console.log(stockData);
+      setCandleData(stockData);
     } catch (error) {
-      setCandleData([]);
-      setSymbol('MSFT');
-      alert(error)
+      // setCandleData([]);
+      // setSymbol('MSFT');
+      alert(error);
     }
   };
 
@@ -105,7 +131,9 @@ const App: React.FC = () => {
           bestMatches={bestMatches}
           updateBestMatches={updateBestMatches}
           clear={clear}
-          setSymbol={setSymbol}
+          addSymbol={addSymbol}
+          removeSymbol={removeSymbol}
+          symbol={symbol}
         />
       </div>
     </div>
