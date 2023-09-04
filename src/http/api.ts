@@ -1,8 +1,7 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
-type AxiosGetFunction<T = any> = () => Promise<AxiosResponse<T>>;
+import axios from 'axios';
 
 const basePath = 'https://finnhub.io/api/v1';
-export const getAllStocks: AxiosGetFunction = async () => {
+export const getAllStocks = async () => {
   try {
     const res = await axios.get(
       `${basePath}/stock/symbol?exchange=US&token=${process.env.REACT_APP_API_KEY}`
