@@ -13,7 +13,7 @@ export interface StockModel {
 
 export interface FormModel {
   prices: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
   search: string
 }

@@ -15,8 +15,8 @@ const initialState = {
   prices: Prices.OPEN,
   startDate: new Date(
     new Date().setFullYear(new Date().getFullYear() - 1)
-  ).toDateString(),
-  endDate: new Date().toDateString(),
+  ),
+  endDate: new Date(),
   search: '',
 };
 const App: React.FC = () => {
@@ -26,8 +26,10 @@ const App: React.FC = () => {
   const [bestMatches, setBestMatches] = useState([]);
   const [symbol, setSymbol] = useState(['MSFT']);
 
-  const changeFormData: React.ChangeEventHandler<HTMLInputElement> = (e) =>
+  const changeFormData: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  }
+    
 
   const addSymbol = (s: string) => {
     if (symbol.length === 3) {
@@ -102,8 +104,6 @@ const App: React.FC = () => {
       console.log(stockData);
       setCandleData(stockData);
     } catch (error) {
-      // setCandleData([]);
-      // setSymbol('MSFT');
       alert(error);
     }
   };

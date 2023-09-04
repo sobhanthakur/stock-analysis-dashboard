@@ -3,8 +3,9 @@
  * @param {Date} date - The Date Object to be converted
  * @param {number} unixTimestamp The corresponding UNIX timestamp (seconds elapsed since January 1st, 1970 at UTC)
  */
-export const convertDateToUnixTimestamp = (date: string): number => {
+export const convertDateToUnixTimestamp = (date: Date): number => {
   let d = new Date(date);
+  d.setHours(0,0,0);
   return Math.floor(d.getTime() / 1000);
 };
 
