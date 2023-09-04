@@ -1,17 +1,6 @@
 import axios from 'axios';
 
 const basePath = 'https://finnhub.io/api/v1';
-export const getAllStocks = async () => {
-  try {
-    const res = await axios.get(
-      `${basePath}/stock/symbol?exchange=US&token=${process.env.REACT_APP_API_KEY}`
-    );
-    return res;
-  } catch (err) {
-    const message = `An error has occured`;
-    throw new Error(message);
-  }
-};
 
 export const getCandleChart = async (
   symbol: string,
@@ -20,6 +9,7 @@ export const getCandleChart = async (
   to: number
 ) => {
   try {
+    console.log(`${basePath}/stock/candle?symbol=${symbol}&resolution=${resolution}&from=${from}&to=${to}&token=${process.env.REACT_APP_API_KEY}`)
     const res = await axios.get(
       `${basePath}/stock/candle?symbol=${symbol}&resolution=${resolution}&from=${from}&to=${to}&token=${process.env.REACT_APP_API_KEY}`
     );
