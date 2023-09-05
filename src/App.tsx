@@ -24,7 +24,7 @@ const App: React.FC = () => {
   const { prices, startDate, endDate, search } = formData;
   const [candleData, setCandleData] = useState<any[]>([]);
   const [bestMatches, setBestMatches] = useState([]);
-  const [symbol, setSymbol] = useState(['MSFT']);
+  const [symbol, setSymbol] = useState<string[]>([]);
 
   const changeFormData: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -41,13 +41,8 @@ const App: React.FC = () => {
   };
 
   const removeSymbol = (s: string) => {
-    if (symbol.length === 1) {
-      alert('Atleast one stock is needed');
-      return;
-    } else {
-      let updatedSymbol = symbol.filter((sym) => sym !== s);
-      setSymbol(updatedSymbol);
-    }
+    let updatedSymbol = symbol.filter((sym) => sym !== s);
+    setSymbol(updatedSymbol);
   };
 
   const updateBestMatches = async () => {
@@ -101,9 +96,10 @@ const App: React.FC = () => {
       });
 
       const stockData = await Promise.all(stockPromises);
-      console.log(stockData);
       setCandleData(stockData);
     } catch (error) {
+      const newSymbol = symbol.slice(0, -1);
+      symbol.length > 0 && setSymbol(newSymbol);
       alert(error);
     }
   };
