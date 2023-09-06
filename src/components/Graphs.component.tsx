@@ -26,7 +26,6 @@ const Graphs: React.FC<{ candleData: any }> = ({ candleData }) => {
               interval="preserveStartEnd"
             />
             <YAxis domain={['dataMin', 'dataMax']} />
-            
             <Tooltip />
             {candleData.map((c: any, i: number) => (
               <Area
@@ -36,7 +35,7 @@ const Graphs: React.FC<{ candleData: any }> = ({ candleData }) => {
                 dataKey="value"
                 stroke={colors[i]}
                 fill={colors[i]}
-                // fillOpacity={0.4}
+                fillOpacity={0.4}
                 stackId="1"
                 strokeWidth={0.5}
               />
@@ -48,4 +47,4 @@ const Graphs: React.FC<{ candleData: any }> = ({ candleData }) => {
   );
 };
 
-export default Graphs;
+export default React.memo(Graphs);

@@ -84,7 +84,6 @@ const App: React.FC = () => {
   const updateChartData = async () => {
     try {
       const { startTimestampUnix, endTimestampUnix } = getDateRange();
-
       const stockPromises = symbol.map(async (s) => {
         const response = await getCandleChart(
           s,
@@ -94,7 +93,6 @@ const App: React.FC = () => {
         );
         return formatData(response.data);
       });
-
       const stockData = await Promise.all(stockPromises);
       setCandleData(stockData);
     } catch (error) {

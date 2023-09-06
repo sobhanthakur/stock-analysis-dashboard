@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { customEncodeQueryParam } from '../helpers/uri-encoder';
 
 const basePath = 'https://finnhub.io/api/v1';
 
@@ -9,9 +10,8 @@ export const getCandleChart = async (
   to: number
 ) => {
   try {
-    console.log(`${basePath}/stock/candle?symbol=${symbol}&resolution=${resolution}&from=${from}&to=${to}&token=${process.env.REACT_APP_API_KEY}`)
     const res = await axios.get(
-      `${basePath}/stock/candle?symbol=${symbol}&resolution=${resolution}&from=${from}&to=${to}&token=${process.env.REACT_APP_API_KEY}`
+      `${basePath}/stock/candle?symbol=${customEncodeQueryParam(symbol)}&resolution=${resolution}&from=${from}&to=${to}&token=${process.env.REACT_APP_API_KEY}`
     );
     return res;
   } catch (err: any) {
