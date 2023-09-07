@@ -63,3 +63,8 @@
 .custom-tooltip p {
     margin: 0;
 }
+
+.inactive {
+    pointer-events: none;
+    color: gray;
+}

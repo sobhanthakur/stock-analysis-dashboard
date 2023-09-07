@@ -23,6 +23,9 @@ const ChartForm: React.FC<{
   removeSymbol,
 }) => {
   const colors = ['#8884d8', '#82ca9d', '#ffc658'];
+  const isActive = (s:string) => {
+    return s.includes('.');
+  }
   return (
     <>
       <div className="input-group mb-3">
@@ -54,7 +57,7 @@ const ChartForm: React.FC<{
               return (
                 <div
                   key={item.symbol}
-                  className={`p-1 m-1 dropdown-list`}
+                  className={`p-1 m-1 dropdown-list ${isActive(item.symbol) && 'inactive'}`}
                   onClick={() => addSymbol(item.symbol)}
                 >
                   <span>{item.symbol}</span> {' - '}

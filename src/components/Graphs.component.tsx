@@ -8,15 +8,15 @@ import {
   Tooltip,
 } from 'recharts';
 
-const Graphs: React.FC<{ candleData: any }> = ({ candleData }) => {
+const Graphs: React.FC<{ candleData: any,symbol: string[] }> = ({ candleData,symbol }) => {
   console.log(candleData);
   const colors = ['#8884d8', '#82ca9d', '#ffc658'];
   return (
     <>
-      {candleData && (
+      {candleData.length > 0 &&  (
         <ResponsiveContainer height={450}>
           <AreaChart
-            data={candleData[0]}
+            data={candleData}
             margin={{ top: 10, right: 30, left: 0, bottom: 20 }}
           >
             <XAxis
@@ -27,19 +27,18 @@ const Graphs: React.FC<{ candleData: any }> = ({ candleData }) => {
             />
             <YAxis domain={['dataMin', 'dataMax']} />
             <Tooltip />
-            {candleData.map((c: any, i: number) => (
+            {symbol.map((s: any, i: number) => (
               <Area
                 key={i}
                 type="monotone"
-                data={c}
-                dataKey="value"
+                dataKey={s}
                 stroke={colors[i]}
                 fill={colors[i]}
-                fillOpacity={0.4}
+                fillOpacity={0.8}
                 stackId="1"
                 strokeWidth={0.5}
               />
-            ))}
+            ))} 
           </AreaChart>
         </ResponsiveContainer>
       )}

@@ -13,9 +13,7 @@ import {
 
 const initialState = {
   prices: Prices.OPEN,
-  startDate: new Date(
-    new Date().setFullYear(new Date().getFullYear() - 1)
-  ),
+  startDate: new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
   endDate: new Date(),
   search: '',
 };
@@ -28,8 +26,7 @@ const App: React.FC = () => {
 
   const changeFormData: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  }
-    
+  };
 
   const addSymbol = (s: string) => {
     if (symbol.length === 3) {
@@ -64,15 +61,17 @@ const App: React.FC = () => {
     setBestMatches([]);
   };
 
-  const formatData = (data: any) => {
-    return data[prices[0].toLocaleLowerCase()]?.map(
-      (item: any, index: number) => {
-        return {
-          value: item.toFixed(2),
-          date: convertUnixTimestampToDate(data.t[index]),
-        };
-      }
-    );
+  const formatData = (data: any, s: string) => {
+    let temp = candleData;
+    data[prices[0].toLocaleLowerCase()]?.forEach((item: any, index: number) => {
+      temp[index] = {
+        ...temp[index],
+        [s]: item.toFixed(2),
+        date: convertUnixTimestampToDate(data.t[index]),
+      };
+    });
+    setCandleData((prev: any) => [...prev, temp]);
+    return true;
   };
 
   const getDateRange = () => {
@@ -91,10 +90,9 @@ const App: React.FC = () => {
           startTimestampUnix,
           endTimestampUnix
         );
-        return formatData(response.data);
+        return formatData(response.data, s);
       });
-      const stockData = await Promise.all(stockPromises);
-      setCandleData(stockData);
+      await Promise.all(stockPromises);
     } catch (error) {
       const newSymbol = symbol.slice(0, -1);
       symbol.length > 0 && setSymbol(newSymbol);
@@ -114,7 +112,7 @@ const App: React.FC = () => {
   return (
     <div className="container-fluid mt-5 row">
       <div className="col-lg-9">
-        <Graphs candleData={candleData} />
+        <Graphs candleData={candleData} symbol={symbol}/>
       </div>
       <div className="col-lg-3">
         <ChartForm
